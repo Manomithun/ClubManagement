@@ -1,0 +1,152 @@
+generator client{
+  provider="prisma-client-js"
+  engineType="library"
+}
+
+datasource db{
+  provider="postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role{
+  STUDENT
+  CLUB_ADMIN
+  SYSTEM_ADMIN
+}
+
+enum EventStatus{
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+  ONGOING
+}
+
+// DEPARTMENT MODEL
+
+model Department{
+  id   Int @id @default(autoincrement())
+  name String @unique
+
+  users User[]
+  clubs Club[]
+}
+
+
+// user Model
+
+model User{
+  id       Int @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+  role     Role @default(STUDENT)
+  deptId   Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  department Department @relation(fields: [deptId],references:[id])
+
+  clubs ClubMember[]
+  events EventRegistration[]
+  createdEvents Event[]
+  adminClubs Club[]
+  waitingList WaitingList[]
+  joinHistory ClubJoinHistory[]
+}
+
+// club 
+
+model Club{
+  id Int @id @default(autoincrement())
+  name String @unique
+  deptId Int
+  adminId Int
+  memberLimit Int
+  description String?
+
+  department Department @relation(fields: [deptId],references: [id])
+  admin User @relation(fields: [adminId],references: [id])
+
+
+  //relations
+  members ClubMember[]
+  events Event[]
+  waitingList WaitingList[]
+  history ClubJoinHistory[]
+}
+
+
+// Club Member -- active member
+
+model ClubMember{
+  id Int @id @default(autoincrement())
+  userId Int
+  clubId Int
+  isActive Boolean @default(true)
+  user User @relation(fields: [userId], references: [id])
+  club Club @relation(fields: [clubId], references: [id])
+  @@unique([userId,clubId])
+}
+
+//waiting list
+
+model WaitingList{
+  id Int @id @default(autoincrement())
+  userId Int
+  clubId Int
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id])
+  club Club @relation(fields: [clubId], references: [id])
+
+  @@unique([userId, clubId])
+}
+
+// club Join Histroy
+
+model ClubJoinHistory{
+  id Int @id @default(autoincrement())
+  userId Int
+  clubId Int
+  joinedAt DateTime @default(now())
+  leftAt DateTime?
+
+  user User @relation(fields:[userId],references:[id])
+  club Club @relation(fields:[clubId],references:[id])
+
+
+}
+
+
+//Event 
+model Event {
+  id              Int         @id @default(autoincrement())
+  title           String
+  date            DateTime
+  maxParticipants Int
+  status          EventStatus @default(PENDING)
+  clubId          Int
+  createdBy       Int
+  description     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  club    Club @relation(fields: [clubId], references: [id])
+  creator User @relation(fields: [createdBy], references: [id])
+
+  registrations EventRegistration[]
+}
+
+model EventRegistration {
+  id      Int @id @default(autoincrement())
+  userId  Int
+  eventId Int
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+}
+
