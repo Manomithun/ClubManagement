@@ -12,21 +12,22 @@ const checkIfTheUserIsPastMemberOfClub=async(userId,clubId)=>{
     return !!member;
 
 }
-const joinClubHistory=async(data)=>{
-    const club=await prisma.ClubJoinHistory.create({
+const joinClubHistory=async(data,tx=prisma)=>{
+    const club=await tx.ClubJoinHistory.create({
         data:data
     });
     return club;
 }
 
-const updateClubJoinHistory=async(userId,clubId,LeftTime)=>{
-    const club=await prisma.ClubJoinHistory.update({
+const updateClubJoinHistory=async(userId,clubId,LeftTime,leaveReason,tx=prisma)=>{
+    const club=await tx.ClubJoinHistory.update({
         where:{
            userId:userId,
            clubId:clubId
         },
         data:{
-        LeftAt:LeftTime
+        LeftAt:LeftTime,
+        leavereason:leaveReason
         }
     });
     return club;
@@ -49,7 +50,7 @@ const getUserHistory = async (userId) => {
     });
 };
 
-const getClubHistory = async (clubId) => {
+const getClubMemberHistory = async (clubId) => {
 
     return await prisma.clubJoinHistory.findMany({
         where: {
@@ -64,10 +65,11 @@ const getClubHistory = async (clubId) => {
             joinedAt: "desc"
         }
     });
+
 };
 export default{
     checkIfTheUserIsPastMemberOfClub,
-    getClubHistory,
+    getClubMemberHistory,
     getUserHistory,
     updateClubJoinHistory,
     joinClubHistory

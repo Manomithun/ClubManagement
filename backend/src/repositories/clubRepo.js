@@ -62,11 +62,76 @@ const deleteClub=async(id)=>{
     return deletedClub;
 }
 
+const hasVacancy=async(id)=>{
+   const club=await prisma.club.findFirst({
+    where:{
+        id
+    }
+   });
+   const clubMember=await prisma.clubMember.findMany({
+    where:{
+        clubId:id
+    }
+   });
+   
+   return club.memberLimit>clubMember.length;
+
+};
+
+const getFullClubHistory = async(clubId)=>{
+
+   return await prisma.club.findUnique({
+      where:{
+         id:clubId
+      },
+
+      include:{
+
+         // membership history
+         clubJoinHistory:{
+            include:{
+               user:true
+            },
+            orderBy:{
+               joinedAt:"desc"
+            }
+         },
+
+         // events
+         events:{
+            include:{
+               registrations:true
+            }
+         },
+
+         // current members
+         members:{
+            include:{
+               user:true
+            }
+         },
+
+         // waiting list
+         waitingList:{
+            include:{
+               user:true
+            }
+         }
+
+      }
+   });
+
+}
+
 export default{
     getClubByName,
     createClub,
     getAllClubs,
     getClubById,
     updateClub,
-    deleteClub
+    deleteClub,
+    hasVacancy,
+    getClubMember,
+    getFullClubHistory
+
 }

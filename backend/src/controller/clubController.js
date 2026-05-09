@@ -38,6 +38,16 @@ const updateClubAdmin=asyncHandler(async(req,res)=>{
     const id=Number(req.params.id);
    const club=await clubService.updateAdmin(id,adminId);
    res.json(club);
+});
+const getFullClubHistory=asyncHandler(async(req, res)=>{
+    const id=Number(req.params.id);
+    const club=await clubService.getClubById(id);
+    if(!club){
+        res.status(404).json({message:"Club not found"});
+        return;
+    }
+    const history=await clubService.getFullClubHistory(id);
+    res.json(history);
 })
 
 export default{
@@ -46,5 +56,6 @@ export default{
     updateClub,
     getClubById,
     getAllClubs,
-    createClub
+    createClub,
+    getFullClubHistory
 }

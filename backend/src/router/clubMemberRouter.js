@@ -1,0 +1,10 @@
+import express from "express";
+import clubMemberController from "../controller/clubMemberController.js";
+const ClubMemberRouter=express.Router();
+ClubMemberRouter.post("/join/:clubId",clubMemberController.joinClub);
+ClubMemberRouter.post("/leave/:clubId",clubMemberController.leaveClub);
+ClubMemberRouter.delete("/remove/:clubId/:userId",clubMemberController.removeMemberFromClub);
+ClubMemberRouter.get("/members/:clubId",clubMemberController.getClubMembers);
+ClubMemberRouter.get("/userClubs/:userId", clubMemberController.getUserClubs);
+ClubMemberRouter.get("/club/:clubId/membership",clubMemberController.getUserSpecificClub);
+export default ClubMemberRouter;

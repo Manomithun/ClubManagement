@@ -1,7 +1,7 @@
 import prisma from "../config/prisma.js";
 
-const createClubMember=async(data)=>{
-    const clubMember=await prisma.ClubMember.create({
+const createClubMember=async(data,tx=prisma)=>{
+    const clubMember=await tx.ClubMember.create({
         data:data
     })
     return clubMember;
@@ -24,6 +24,20 @@ const userCurrentClubDetails=async(id)=>{
     return clubs;
 }
 
+const getUserSpecificClub=async(userId,clubId)=>{
+    const club=await prisma.ClubMember.findFirst({
+        where:{
+            userId:userId,
+            clubId:clubId
+        },
+        include:{
+            club:true
+        }
+    });
+    return club;
+
+}
+
 const getClubMembers=async(id)=>{
     const clubMember=await prisma.ClubMember.findMany({
         where:{
@@ -36,8 +50,8 @@ const getClubMembers=async(id)=>{
     return clubMember;
 }
 
-const removeClubMember=async(userId,clubId)=>{
-    const removedMember=await prisma.ClubMember.delete({
+const removeClubMember=async(userId,clubId,tx=prisma)=>{
+    const removedMember=await tx.ClubMember.delete({
         where:{
             clubId:clubId,
             userId:userId
@@ -51,5 +65,6 @@ export default{
     updateClubMember,
     userCurrentClubDetails,
     getClubMembers,
-    removeClubMember
+    removeClubMember,
+    getUserSpecificClub
 }

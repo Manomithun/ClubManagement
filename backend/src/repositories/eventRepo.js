@@ -60,6 +60,8 @@ const deleteEvent=async(id)=>{
     });
     return events;
 }
+
+
 export default{
     createEvent,
     getAllEvents,

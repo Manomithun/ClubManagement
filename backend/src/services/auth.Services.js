@@ -9,9 +9,24 @@ export const register=async(data)=>{
     const{name,email,password,deptId}=data
     const existUser= await usersRepo.getUserByEmail(email);
 
-    if(existUser){
+    if(existUser && !existUser.isDeleted){
        throw new CustomError("User already exists with this email!",400);      
     }
+    
+    if(existUser && existUser.isDeleted){
+
+  return await prisma.user.update({
+      where:{
+         email
+      },
+      data:{
+         isDeleted:false,
+         deletedAt:null
+      }
+   });
+
+}
+
     const existDept=await usersRepo.getDepartmentByID(deptId);
     if(!existDept){
         throw new CustomError("department not found", 404);
@@ -31,6 +46,12 @@ export const login=async({email,password})=>{
     if(!user){      
         throw new CustomError(" Invalid credentials",401);
     }
+    if(user.isDeleted){
+   throw new customError(
+      "Account deactivated",
+      403
+   );
+}
     
     const valid=await bcrypt.compare(password,user.password);
     if(!valid){      

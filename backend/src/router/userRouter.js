@@ -1,0 +1,10 @@
+import express from "express";
+import userController from "../controller/userServiceController.js";
+const UserRouter=express.Router();
+UserRouter.get("/me",userController.getMyAccount);
+UserRouter.get("/:id",userController.getUserByID);
+UserRouter.get("/All",userController.getAllUser);
+UserRouter.get("/:id/pastClub",userController.getPastClub);
+UserRouter.put(":/id",userController.updateUser);
+UserRouter.delete("/me/delete",userController.deleteUser);
+export default UserRouter;   

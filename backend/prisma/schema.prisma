@@ -7,6 +7,11 @@ datasource db{
   provider="postgresql"
   url      = env("DATABASE_URL")
 }
+enum LeaveReason {
+  LEFT_VOLUNTARILY
+  REMOVED_BY_ADMIN
+  REMOVED_BY_SYSTEM
+}
 
 enum Role{
   STUDENT
@@ -45,6 +50,9 @@ model User{
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isDeleted Boolean @default(false)
+
+  deletedAt DateTime?
 
   department Department @relation(fields: [deptId],references:[id])
 
@@ -111,10 +119,10 @@ model ClubJoinHistory{
   clubId Int
   joinedAt DateTime @default(now())
   leftAt DateTime?
-
+  leaveReason LeaveReason? @default( LEFT_VOLUNTARILY)
   user User @relation(fields:[userId],references:[id])
   club Club @relation(fields:[clubId],references:[id])
-
+  
 
 }
 

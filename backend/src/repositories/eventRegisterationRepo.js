@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js";
 const createEventRegisteration=async(data)=>{
+   
     const EventReg=await prisma.EventRegisteration.create({
         data:data
     });
@@ -30,10 +31,36 @@ const deleteRegister=async(id)=>{
     });
     return deletedEventReg;
 }
+const getEventReg=async(id)=>{
+    const reg=await prisma.EventRegisteration.find({
+        where:{
+            id:id
+        }
+    });
+    return reg;
+}
+const userCanRegister=async(eventId)=>{
+    const getmemberLimit=await prisma.Event.find({
+        where:{
+            id:eventId
+        },
+        select:{
+            maxParticipants:true
+        }
+    });
+    const registeredCount=await prisma.EventRegisteration.findMany({
+        where:{
+            eventId:eventId
+        }
+    }).length();
+    return (getmemberLimit>registeredCount);
+}
 
 export default{
     deleteRegister,
     getRegisterationForEvent,
     createEventRegisteration,
-    checkUserRegisteration
+    checkUserRegisteration,
+    userCanRegister,
+    getEventReg
 }

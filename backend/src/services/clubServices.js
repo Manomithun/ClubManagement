@@ -84,6 +84,17 @@ const updateAdmin=async(id,adminId)=>{
   return updatedClub;
 
 }
+const getFullClubHistory=async(clubId)=>{
+
+  
+  const club=await clubRepo.getClubById(clubId);
+  if(!club){
+    throw new customError("Club id not found", 404);
+  }
+  const history=await clubRepo.getFullClubHistory(clubId);
+  return history;
+}
+
 
 export default{
   createClub,
@@ -91,5 +102,6 @@ export default{
   getClubById,
   updateClub,
   deleteClub,
-  updateAdmin
+  updateAdmin,
+  getFullClubHistory,
 }

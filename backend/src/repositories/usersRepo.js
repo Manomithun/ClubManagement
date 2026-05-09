@@ -77,20 +77,26 @@ const getUserRegisteredEvent=async(id)=>{
 
 }
 
-const deleteUser=async(id)=>{
-    const deletedUser=await prisma.User.delete({
-        where:{id}
-    });
-    return deletedUser;
-}
+const softDeleteUser = async(userId)=>{
 
+   return await prisma.user.update({
+      where:{
+         id:userId
+      },
+      data:{
+         isDeleted:true,
+         deletedAt:new Date()
+      }
+   });
+
+}
 
 
 export default{
    getDepartmentByID,
     getUserByEmail,
     getUserById,
-    deleteUser,
+    softDeleteUser,
     getUserRegisteredEvent,
     getPastClub,
     getAllUser,

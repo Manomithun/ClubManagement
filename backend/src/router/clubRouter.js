@@ -10,5 +10,5 @@ clubRouter.get("/:id",clubController.getClubById);
 clubRouter.put("/:id",clubController.updateClub);
 clubRouter.delete("/:id",clubController.deleteClub);
 clubRouter.patch("/:id/admin",clubController.updateClubAdmin);
-
+clubRouter.get("/:id/history",clubController.getFullClubHistory);
 export default clubRouter;
