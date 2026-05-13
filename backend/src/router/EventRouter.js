@@ -1,11 +1,13 @@
 import express from "express";
-import eventController from "../controller/eventController.js"
+import eventController from "../controller/eventController.js";
+import {protect,authorizeRole} from "../middleware/authmiddleware";
 const eventRouter =express.router();
+eventRouter.use(protect);
 eventRouter.post("/",eventController.createEvent);
-eventRouter.get("/",eventController.getAllEvent);
+eventRouter.get("/",eventController.getAllEvents);
 eventRouter.get("/:id",eventController.getEventById);
-eventRouter.put("/:id",eventController.updateEvent);
-eventRouter.patch("/:id/status",eventController.updateEventStatus);
-eventRouter.delete("/:id",eventController.deleteEvent);
-eventRouter.get("/:id/club",eventController.getEventByVlubId);
+eventRouter.put("/:id",authorizeRole("SYSTEM_AMDIN","CLUB_AMDIN"),eventController.updateEvent);
+eventRouter.patch("/:id/status",authorizeRole("SYSTEM_AMDIN"),eventController.updateEventStatus);
+eventRouter.delete("/:id",authorizeRole("SYSTEM_AMDIN"),eventController.deleteEvent);
+eventRouter.get("/:id/club",eventController.getEventByClubId);
 export default eventRouter;

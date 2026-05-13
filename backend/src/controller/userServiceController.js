@@ -19,7 +19,7 @@ const getAllUser=asyncHandler(async(req,res)=>{
 });
 
 const updateUser=asyncHandler(async(req,res)=>{
-    const id=Number(req.params.id);
+    const id=Number(req.user.id);
     const updatedUser=await updateUser(id,req.body);
     res.json(updatedUser);
 })

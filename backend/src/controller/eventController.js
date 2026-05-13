@@ -43,7 +43,7 @@ const getEventByClubId=asyncHandler(async(req,res)=>{
 })
 export default{
     getEventByClubId,
-    delteEvent,
+    deleteEvent,
     updateEventStatus,
     updateEvent,
     createEvent,

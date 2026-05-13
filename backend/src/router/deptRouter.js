@@ -1,9 +1,10 @@
 import express from "express";
 import deptController from "../controller/deptController.js";
-
+import {protect,authorizeRole} from "../middleware/authmiddleware.js";
 const deptRouter=express.Router();
+deptRouter.use(protect);
 deptRouter.get("/:id",deptController.getDepartment);
-deptRouter.post("/",deptController.createDepartment);
-deptRouter.put("/:id",deptController.updateDepartment);
-deptRouter.delete("/:id",deptController.deleteDepartment);
+deptRouter.post("/",authorizeRole("SYSTEM_ADMIN"),deptController.createDepartment);
+deptRouter.put("/:id",authhorizeRole("SYSTEM_ADMIN"),deptController.updateDepartment);
+deptRouter.delete("/:id",authorizeRole("SYSTEM_AMIN"),deptController.deleteDepartment);
 export default deptRouter;
