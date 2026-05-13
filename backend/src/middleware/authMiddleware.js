@@ -2,7 +2,7 @@ import jwt from "jsowebtoken";
 import CustomError from "../utils/CustomError.js";
 import asyncHandler from "express-async-handler"
 import "dontenv/config"
-export const verifyToken=asyncHandler((req,res,next)=>{
+export const protect=asyncHandler((req,res,next)=>{
     const authHeader=req.headers.Authorization || req.headers.auth;
     if(authHeader && authHeader.startsWith("Bearer")){
         const token=authHeader.split(" ")[1];
@@ -21,8 +21,11 @@ export const verifyToken=asyncHandler((req,res,next)=>{
     }
 });
 
-export const authorizeRole=asyncHandler((req,res,next)=>{
-    if(!req.user || req.user.role!=="admin"){
-        throw new CustomError("Not authorized as an admin", 401)
-    }
-});
+export const authorizeRole=(...allowedRoles)=>{
+    return asyncHandler(async(req,res,next)=>{
+        if(!allowedRoles.includes(req.user.role)){
+            throw new CustomError(`User role ${req.user.role} is not allowed to access this route`, 403);
+        }
+        next();
+    })
+}
