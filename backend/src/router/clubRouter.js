@@ -1,14 +1,14 @@
 import express from "express";
 import clubController from "../controller/clubController.js";
-import {clubSchema} from "../valadators/clubValidations";
+import {clubSchema,updateClubAdminSchema} from "../valadators/clubValidations";
 import validate from "../middleware/validationMiddleWare.js";
 import {protect,authorizeRole} from "../middleware/authMiddleWware.js";
 const clubRouter=express.Router();
 clubRouter.use(protect);
-clubRouter.post("/", authorizeRole("SYSTEM_ADMIN"),validate(clubSchema),clubController.createClub);
+clubRouter.post("/",validate(clubSchema),authorizeRole("SYSTEM_ADMIN"),validate(clubSchema),clubController.createClub);
 clubRouter.get("/",clubController.getAllClubs);
 clubRouter.get("/:id",clubController.getClubById);
-clubRouter.put("/:id",authorizeRole("SYSTEM_ADMIN","CLUB_ADMIN"),clubController.updateClub);
+clubRouter.put("/:id",validate(updateClubAdminSchema),authorizeRole("SYSTEM_ADMIN","CLUB_ADMIN"),clubController.updateClub);
 clubRouter.delete("/:id",authorizeRole("SYSTEM_ADMIN"),clubController.deleteClub);
 clubRouter.patch("/:id/admin",authorizeRole("SYSTEM_ADMIN"),clubController.updateClubAdmin);
 clubRouter.get("/:id/history",authorizeRole("SYSTEM_ADMIN","CLUB_ADMIN"),clubController.getFullClubHistory);

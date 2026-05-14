@@ -1,12 +1,14 @@
 import express from "express";
 import eventController from "../controller/eventController.js";
 import {protect,authorizeRole} from "../middleware/authmiddleware";
+import validate from "../middleware/validationMiddleware.js";
+import {eventValidatorSchema,updateEventStatus} from "../validators/eventValidator.js";
 const eventRouter =express.router();
 eventRouter.use(protect);
-eventRouter.post("/",eventController.createEvent);
+eventRouter.post("/",validate(eventValidatorSchema),  authorizeRole("SYSTEM_ADMIN","CLUB_ADMIN"),eventController.createEvent);
 eventRouter.get("/",eventController.getAllEvents);
 eventRouter.get("/:id",eventController.getEventById);
-eventRouter.put("/:id",authorizeRole("SYSTEM_AMDIN","CLUB_AMDIN"),eventController.updateEvent);
+eventRouter.put("/:id",validate(updateEventStatus),authorizeRole("SYSTEM_AMDIN","CLUB_AMDIN"),eventController.updateEvent);
 eventRouter.patch("/:id/status",authorizeRole("SYSTEM_AMDIN"),eventController.updateEventStatus);
 eventRouter.delete("/:id",authorizeRole("SYSTEM_AMDIN"),eventController.deleteEvent);
 eventRouter.get("/:id/club",eventController.getEventByClubId);

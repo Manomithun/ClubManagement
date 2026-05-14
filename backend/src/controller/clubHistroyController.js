@@ -6,7 +6,7 @@ const getClubMemberHistory=asyncHandler(async(req,res)=>{
     res.json(history);
 })
 const getUserClubHistory=asyncHandler(async(req,res)=>{
-    const userId=req.user.id;
+    const userId=Number(req.user.id);
     const history=await clubHistoryService.getUserClubHistory(userId);
     res.json(history);
 });

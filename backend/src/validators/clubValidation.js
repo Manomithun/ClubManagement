@@ -8,3 +8,6 @@ export const clubSchema=z.object({
     description:z.string().optional()
 
 })
+export const updateClubAdminSchema=z.object({
+    adminId:z.string.uuid("Invalid admin Id")
+})
