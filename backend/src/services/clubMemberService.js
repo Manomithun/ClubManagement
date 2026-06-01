@@ -1,7 +1,7 @@
 import prisma from "../config/prisma.js";
 import clubMemberRepo from "../repositories/clubMemberRepo.js";
 import clubHistoryRepo from "../repositories/clubHistoryRepo.js";
-import customError from "../utils/customError.js";
+import customError from "../utils/CustomError.js";
 import waitList from "../repositories/waitingList.js";
 import clubRepo from "../repositories/clubRepo.js";
 const joinClub = async (data) => {
@@ -14,7 +14,7 @@ const joinClub = async (data) => {
     ) {
         throw new customError(
             "You are already a member of this club",
-            401
+            409
         );
     }
     //check if the user is the past member of club
@@ -22,7 +22,7 @@ const joinClub = async (data) => {
     if(isPastMember){
         throw new customError(
             "You are a past member of the club, please contact admin",
-            401
+            403
         );
     }
 
@@ -38,15 +38,12 @@ if(!hasVacancy){
             data.userId,data.clubId);
         if(checkUserIsInWaitingList){
             throw new customError(
-                "you are already in waiting list of this club",
-                401
+                "You are already in the waiting list of this club",
+                409
             );
         }
         await waitList.createWaitingListEntry({userId:data.userId, clubId:data.clubId});
-        throw new customError(
-            "Club is full, you have been added to the waiting list",
-            401
-        );
+        return { message: "Club is full, you have been added to the waiting list" };
     }
 
 
@@ -54,20 +51,14 @@ if(!hasVacancy){
     const result = await prisma.$transaction(async (tx) => {
 
         await clubHistoryRepo.joinClubHistory({
-            
-                userId: data.userId,
-                clubId: data.clubId,
-                joinedAt: new Date(),
-                isActive:true
-            
-        },tx);
-
-        const member = await clubMemberRepo.createClubMember({
-            data: {
                 userId: data.userId,
                 clubId: data.clubId,
                 joinedAt: new Date()
-            }
+        },tx);
+
+        const member = await clubMemberRepo.createClubMember({
+            userId: data.userId,
+            clubId: data.clubId
         },tx);
 
         return member;
@@ -94,13 +85,13 @@ const leaveClub = async (userId, clubId,LeftAt,leaveReason) => {
         // add to club
         await clubMemberRepo.createClubMember({
             userId:waitingUser.userId,
-            clubId:clubId,
-            isActive:true
+            clubId:clubId
         },tx);
         //update clubJoin History
         await clubHistoryRepo.joinClubHistory({
             userId:waitingUser.userId,
-            clubId:clubId
+            clubId:clubId,
+            joinedAt: new Date()
         },tx);
 
         // remove from waiting list

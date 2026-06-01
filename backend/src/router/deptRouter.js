@@ -1,12 +1,15 @@
 import express from "express";
 import deptController from "../controller/deptController.js";
-import {protect,authorizeRole} from "../middleware/authmiddleware.js";
+import {protect,authorizeRole} from "../middleware/authMiddleWare.js";
 import {createDeptSchema} from "../validators/deptValidation.js";
-import validate from "../middleware/validationMiddleware.js";
+import validate from "../middleware/validationMiddleWare.js";
 const deptRouter=express.Router();
-deptRouter.use(protect);
+// Public: anyone can list departments (needed for registration form)
+deptRouter.get("/",deptController.getAllDepartments);
 deptRouter.get("/:id",deptController.getDepartment);
-deptRouter.post("/",validate(createDeptScheam),authorizeRole("SYSTEM_ADMIN"),deptController.createDepartment);
-deptRouter.put("/:id",authhorizeRole("SYSTEM_ADMIN"),deptController.updateDepartment);
-deptRouter.delete("/:id",authorizeRole("SYSTEM_AMIN"),deptController.deleteDepartment);
+// Protected: only admins can create/update/delete
+deptRouter.use(protect);
+deptRouter.post("/",validate(createDeptSchema),authorizeRole("SYSTEM_ADMIN"),deptController.createDepartment);
+deptRouter.put("/:id",authorizeRole("SYSTEM_ADMIN"),deptController.updateDepartment);
+deptRouter.delete("/:id",authorizeRole("SYSTEM_ADMIN"),deptController.deleteDepartment);
 export default deptRouter;

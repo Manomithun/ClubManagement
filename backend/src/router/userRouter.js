@@ -1,12 +1,13 @@
 import express from "express";
 import userController from "../controller/userServiceController.js";
-import {protect,authorizeRole} from "../middleware/authmiddleware";
+import {protect,authorizeRole} from "../middleware/authMiddleWare.js";
 const UserRouter=express.Router();
 UserRouter.use(protect);
 UserRouter.get("/me",userController.getMyAccount);
+UserRouter.get("/all",authorizeRole("SYSTEM_ADMIN","CLUB_ADMIN"),userController.getAllUser);
 UserRouter.get("/:id",userController.getUserByID);
-UserRouter.get("/All",authorizeRole("SYSTEM_AMDIN","CLUB_AMDIN"),userController.getAllUser);
 UserRouter.get("/:id/pastClub",userController.getPastClub);
 UserRouter.put("/me",userController.updateUser);
-UserRouter.delete("/me/delete",authorizeRole("STUDENT"),userController.deleteUser);
+UserRouter.patch("/:id/role",authorizeRole("SYSTEM_ADMIN"),userController.updateUserRole);
+UserRouter.delete("/me/delete",userController.deleteUser);
 export default UserRouter;   

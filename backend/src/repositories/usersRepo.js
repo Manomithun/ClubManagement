@@ -30,14 +30,16 @@ const getUserById = async (id) => {
     });
 };
 const updateUser=async(id,data)=>{
-    const user=await prisma.User.update({
+    const user=await prisma.user.update({
         where:{id},
         data:data
     })
     return user;
 }
 const getAllUser=async({page,limit,search})=>{
-    const users=await prisma.User.findMany({
+    const p = parseInt(page)  || 1;
+    const l = parseInt(limit) || 10;
+    const users=await prisma.user.findMany({
         where:{
             ...(search && {
                 name:{
@@ -46,14 +48,14 @@ const getAllUser=async({page,limit,search})=>{
                 }
             })
         },
-        skip:(page-1)*limit,
-        take:limit
+        skip:(p-1)*l,
+        take:l
     });
     return users;
 }
 
 const getPastClub=async(id)=>{
-    const pastClubs=await prisma.ClubJoinHistory.findMany({
+    const pastClubs=await prisma.clubJoinHistory.findMany({
         where:{
             userId:id,
             leftAt:{
@@ -63,10 +65,11 @@ const getPastClub=async(id)=>{
         include:{
             club:true
         }
-    })
+    });
+    return pastClubs;
 }
 const getUserRegisteredEvent=async(id)=>{
-    const RegisteredEvent=await prisma.EventRegisteration.findMany({
+    const RegisteredEvent=await prisma.eventRegisteration.findMany({
         where:{
            userId:id 
         },
@@ -74,7 +77,7 @@ const getUserRegisteredEvent=async(id)=>{
           event:true
         }
     });
-
+    return RegisteredEvent;
 }
 
 const softDeleteUser = async(userId)=>{

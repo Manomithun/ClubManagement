@@ -1,6 +1,6 @@
 import prisma from "../config/prisma.js";
 const checkIfTheUserIsPastMemberOfClub=async(userId,clubId)=>{
-    const member=await prisma.ClubJoinHistory({
+    const member=await prisma.clubJoinHistory.findFirst({
         where:{
             userId:userId,
             clubId:clubId,
@@ -10,24 +10,24 @@ const checkIfTheUserIsPastMemberOfClub=async(userId,clubId)=>{
         }
     });
     return !!member;
-
 }
 const joinClubHistory=async(data,tx=prisma)=>{
-    const club=await tx.ClubJoinHistory.create({
+    const club=await tx.clubJoinHistory.create({
         data:data
     });
     return club;
 }
 
 const updateClubJoinHistory=async(userId,clubId,LeftTime,leaveReason,tx=prisma)=>{
-    const club=await tx.ClubJoinHistory.update({
-        where:{
-           userId:userId,
-           clubId:clubId
-        },
+    const record = await tx.clubJoinHistory.findFirst({
+        where:{ userId, clubId, leftAt: null }
+    });
+    if(!record) return null;
+    const club=await tx.clubJoinHistory.update({
+        where:{ id: record.id },
         data:{
-        LeftAt:LeftTime,
-        leavereason:leaveReason
+            leftAt:LeftTime,
+            leaveReason:leaveReason
         }
     });
     return club;

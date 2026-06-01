@@ -1,10 +1,10 @@
-import jwt from "jsowebtoken";
+import jwt from "jsonwebtoken";
 import CustomError from "../utils/CustomError.js";
 import asyncHandler from "express-async-handler"
-import "dontenv/config"
+import "dotenv/config"
 export const protect=asyncHandler((req,res,next)=>{
-    const authHeader=req.headers.Authorization || req.headers.auth;
-    if(authHeader && authHeader.startsWith("Bearer")){
+    const authHeader=req.headers.authorization || req.headers.auth;
+    if(authHeader && authHeader.startsWith("Bearer ")){
         const token=authHeader.split(" ")[1];
         if(!token){
          throw new CustomError("invalid token",401);

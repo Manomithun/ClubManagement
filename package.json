@@ -14,8 +14,10 @@
   "license": "ISC",
   "author": "Mano",
   "type": "module",
-  "main": "index.js",
+  "main": "backend\\src\\server.js",
   "scripts": {
+    "dev": "nodemon backend\\src\\server.js",
+    "frontend": "cd frontend && npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

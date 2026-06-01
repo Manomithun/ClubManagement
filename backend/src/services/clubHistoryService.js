@@ -12,11 +12,11 @@ const getUserClubHistory=async(userId)=>{
 }
 const getClubMemberHistory=async(clubId)=>{
     // check club exist
-    const club=await clubRepo.getCLubById(clubId);
+    const club=await clubRepo.getClubById(clubId);
     if(!club){
         throw new customError("Club id not found",404);
     }
-    return await clubHistoryRepo.getClubMemberHistory;
+    return await clubHistoryRepo.getClubMemberHistory(clubId);
 }
 export default{
     getClubMemberHistory,

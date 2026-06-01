@@ -1,11 +1,11 @@
 import express from "express";
 import clubController from "../controller/clubController.js";
-import {clubSchema,updateClubAdminSchema} from "../valadators/clubValidations";
+import {clubSchema,updateClubAdminSchema} from "../validators/clubValidation.js";
 import validate from "../middleware/validationMiddleWare.js";
-import {protect,authorizeRole} from "../middleware/authMiddleWware.js";
+import {protect,authorizeRole} from "../middleware/authMiddleWare.js";
 const clubRouter=express.Router();
 clubRouter.use(protect);
-clubRouter.post("/",validate(clubSchema),authorizeRole("SYSTEM_ADMIN"),validate(clubSchema),clubController.createClub);
+clubRouter.post("/",validate(clubSchema),authorizeRole("SYSTEM_ADMIN"),clubController.createClub);
 clubRouter.get("/",clubController.getAllClubs);
 clubRouter.get("/:id",clubController.getClubById);
 clubRouter.put("/:id",validate(updateClubAdminSchema),authorizeRole("SYSTEM_ADMIN","CLUB_ADMIN"),clubController.updateClub);

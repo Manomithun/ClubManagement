@@ -57,7 +57,7 @@ model User{
   department Department @relation(fields: [deptId],references:[id])
 
   clubs ClubMember[]
-  events EventRegistration[]
+  events EventRegisteration[]
   createdEvents Event[]
   adminClubs Club[]
   waitingList WaitingList[]
@@ -144,10 +144,10 @@ model Event {
   club    Club @relation(fields: [clubId], references: [id])
   creator User @relation(fields: [createdBy], references: [id])
 
-  registrations EventRegistration[]
+  registrations EventRegisteration[]
 }
 
-model EventRegistration {
+model EventRegisteration {
   id      Int @id @default(autoincrement())
   userId  Int
   eventId Int

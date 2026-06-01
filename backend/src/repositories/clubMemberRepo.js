@@ -1,19 +1,23 @@
 import prisma from "../config/prisma.js";
 
 const createClubMember=async(data,tx=prisma)=>{
-    const clubMember=await tx.ClubMember.create({
+    const clubMember=await tx.clubMember.create({
         data:data
     })
     return clubMember;
 }
-const updateClubMember=async(data)=>{
-    const updatedClubMember=await prisma.ClubMember.update({
+const updateClubMember=async(userId,clubId,data)=>{
+    const updatedClubMember=await prisma.clubMember.update({
+        where:{
+            userId_clubId:{ userId, clubId }
+        },
         data:data
     })
+    return updatedClubMember;
 };
 
 const userCurrentClubDetails=async(id)=>{
-    const clubs=await prisma.ClubMember.findMany({
+    const clubs=await prisma.clubMember.findMany({
         where:{
             userId:id
         },
@@ -25,7 +29,7 @@ const userCurrentClubDetails=async(id)=>{
 }
 
 const getUserSpecificClub=async(userId,clubId)=>{
-    const club=await prisma.ClubMember.findFirst({
+    const club=await prisma.clubMember.findFirst({
         where:{
             userId:userId,
             clubId:clubId
@@ -39,7 +43,7 @@ const getUserSpecificClub=async(userId,clubId)=>{
 }
 
 const getClubMembers=async(id)=>{
-    const clubMember=await prisma.ClubMember.findMany({
+    const clubMember=await prisma.clubMember.findMany({
         where:{
             clubId:id
         },
@@ -51,10 +55,12 @@ const getClubMembers=async(id)=>{
 }
 
 const removeClubMember=async(userId,clubId,tx=prisma)=>{
-    const removedMember=await tx.ClubMember.delete({
+    const removedMember=await tx.clubMember.delete({
         where:{
-            clubId:clubId,
-            userId:userId
+            userId_clubId:{
+                clubId:clubId,
+                userId:userId
+            }
         }
         
     });

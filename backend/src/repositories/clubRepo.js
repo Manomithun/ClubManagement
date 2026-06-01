@@ -1,21 +1,23 @@
 import prisma from "../config/prisma.js";
 
 const getClubByName=async(name)=>{
-    const club=await prisma.Club.findUnique({
+    const club=await prisma.club.findUnique({
         where:{name}
     });
     return club;
 };
 
 const createClub=async(clubData)=>{
-    const club=await prisma.Club.create({
+    const club=await prisma.club.create({
         data:clubData
     });
     return club;
 }
 
 const getAllClubs=async({page,limit,search,department})=>{
-    const clubs=await prisma.Club.findMany({
+    const p = parseInt(page)  || 1;
+    const l = parseInt(limit) || 10;
+    const clubs=await prisma.club.findMany({
         where:{
             ...(search && {
                 name:{
@@ -33,21 +35,21 @@ const getAllClubs=async({page,limit,search,department})=>{
                 }
             })
         },
-        skip:(page-1)*limit,
-        take:limit
+        skip:(p-1)*l,
+        take:l
     });
     return clubs;
 }
 
 const getClubById=async(id)=>{
-    const club=await prisma.Club.findUnique({
+    const club=await prisma.club.findUnique({
         where:{id}
     });
     return club;
 }
 
 const updateClub=async(id,data)=>{
-    const club=await prisma.Club.update({
+    const club=await prisma.club.update({
         where:{id},
         data:data
     })
@@ -56,7 +58,7 @@ const updateClub=async(id,data)=>{
 
 }
 const deleteClub=async(id)=>{
-    const deletedClub=await prisma.Club.delete({
+    const deletedClub=await prisma.club.delete({
         where:{id}
     })
     return deletedClub;
@@ -88,7 +90,7 @@ const getFullClubHistory = async(clubId)=>{
       include:{
 
          // membership history
-         clubJoinHistory:{
+         history:{
             include:{
                user:true
             },
@@ -131,7 +133,6 @@ export default{
     updateClub,
     deleteClub,
     hasVacancy,
-    getClubMember,
     getFullClubHistory
 
 }

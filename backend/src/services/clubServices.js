@@ -51,7 +51,7 @@ const updateClub=async(id,data)=>{
   
   const existClub=await clubRepo.getClubById(id);
   if(!existClub){
-    throw new CustomError("club not found", 404);
+    throw new customError("club not found", 404);
   }
   const club=await clubRepo.updateClub(id,data);
   
@@ -63,7 +63,7 @@ const deleteClub=async(id)=>{
   
   const existClub=await clubRepo.getClubById(id);
   if(!existClub){
-    throw new CustomError("club not found", 404);
+    throw new customError("club not found", 404);
   }
   const deletedClub=await clubRepo.deleteClub(id);
   return deletedClub;

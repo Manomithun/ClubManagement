@@ -1,22 +1,24 @@
 import prisma from "../config/prisma.js";
 const createEventRegisteration=async(data)=>{
    
-    const EventReg=await prisma.EventRegisteration.create({
+    const EventReg=await prisma.eventRegisteration.create({
         data:data
     });
     return EventReg;
 }
 const checkUserRegisteration=async(eventId,userId)=>{
-     const EventReg=await prisma.EventRegisteration.find({
+     const EventReg=await prisma.eventRegisteration.findUnique({
         where:{
-            eventId,
-            userId
+     userId_eventId: {
+      userId:userId,
+      eventId:eventId,
+    },
         }
     });
     return EventReg;
 }
 const getRegisterationForEvent=async(id)=>{
-    const EventReg=await prisma.EventRegisteration.findMany({
+    const EventReg=await prisma.eventRegisteration.findMany({
         where:{
             eventId:id
         }
@@ -24,7 +26,7 @@ const getRegisterationForEvent=async(id)=>{
     return EventReg;
 }
 const deleteRegister=async(id)=>{
-    const deletedEventReg=await prisma.EventRegisteration.delete({
+    const deletedEventReg=await prisma.eventRegisteration.delete({
         where:{
             id
         }
@@ -32,7 +34,7 @@ const deleteRegister=async(id)=>{
     return deletedEventReg;
 }
 const getEventReg=async(id)=>{
-    const reg=await prisma.EventRegisteration.find({
+    const reg=await prisma.eventRegisteration.findUnique({
         where:{
             id:id
         }
@@ -40,7 +42,7 @@ const getEventReg=async(id)=>{
     return reg;
 }
 const userCanRegister=async(eventId)=>{
-    const getmemberLimit=await prisma.Event.find({
+    const getmember=await prisma.event.findUnique({
         where:{
             id:eventId
         },
@@ -48,13 +50,27 @@ const userCanRegister=async(eventId)=>{
             maxParticipants:true
         }
     });
-    const registeredCount=await prisma.EventRegisteration.findMany({
-        where:{
-            eventId:eventId
-        }
-    }).length();
+    const getmemberLimit=getmember.maxParticipants;
+     const registrations = await prisma.eventRegisteration.findMany({
+  where: {
+    eventId: eventId,
+  },
+   });
+const registeredCount = registrations.length;
     return (getmemberLimit>registeredCount);
 }
+
+const getMyRegistrations = async (userId) => {
+    return await prisma.eventRegisteration.findMany({
+        where: { userId },
+        include: {
+            event: {
+                include: { club: true }
+            }
+        },
+        orderBy: { event: { date: 'asc' } }
+    });
+};
 
 export default{
     deleteRegister,
@@ -62,5 +78,6 @@ export default{
     createEventRegisteration,
     checkUserRegisteration,
     userCanRegister,
-    getEventReg
+    getEventReg,
+    getMyRegistrations
 }

@@ -1,8 +1,7 @@
 import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
 import "dotenv/config";
-import asyncHandler from 'express-async-handler';
-import CustomError from "../utils/CustomError.js"
+import CustomError from "../utils/CustomError.js";
 import authRepo from "../repositories/authRepo.js";
 import usersRepo from "../repositories/usersRepo.js";
 export const register=async(data)=>{
@@ -14,18 +13,11 @@ export const register=async(data)=>{
     }
     
     if(existUser && existUser.isDeleted){
-
-  return await prisma.user.update({
-      where:{
-         email
-      },
-      data:{
+      return await usersRepo.updateUser(existUser.id, {
          isDeleted:false,
          deletedAt:null
-      }
-   });
-
-}
+      });
+    }
 
     const existDept=await usersRepo.getDepartmentByID(deptId);
     if(!existDept){
@@ -47,7 +39,7 @@ export const login=async({email,password})=>{
         throw new CustomError(" Invalid credentials",401);
     }
     if(user.isDeleted){
-   throw new customError(
+   throw new CustomError(
       "Account deactivated",
       403
    );

@@ -2,7 +2,7 @@
 import jsonwebtoken from 'jsonwebtoken';
 import "dotenv/config";
 import asyncHandler from 'express-async-handler'
-import * as authServices from "../services/auth.services.js"
+import * as authServices from "../services/auth.Services.js"
 import CustomError from "../utils/CustomError.js"
 export const signUp=asyncHandler(async(req,res)=>{
    

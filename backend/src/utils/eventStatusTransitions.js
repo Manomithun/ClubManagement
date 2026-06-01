@@ -1,7 +1,7 @@
 const allowedTransitions={
     "PENDING":{
         "APPROVED":["SYSTEM_ADMIN"],
-        "REJECT":["SYSTEM_ADMIN"]
+        "REJECTED":["SYSTEM_ADMIN"]
     },
     "APPROVED":{
         "ONGOING":["SYSTEM_ADMIN","CLUB_ADMIN"]

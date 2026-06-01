@@ -1,11 +1,11 @@
 import express from "express";
 import clubMemberController from "../controller/clubMemberController.js";
-import {protect,authorizeRole} from "../middleware/authMiddleware.js";
+import {protect,authorizeRole} from "../middleware/authMiddleWare.js";
 const ClubMemberRouter=express.Router();
 ClubMemberRouter.use(protect);
 ClubMemberRouter.post("/join/:clubId",clubMemberController.joinClub);
 ClubMemberRouter.post("/leave/:clubId",clubMemberController.leaveClub);
-ClubMemberRouter.delete("/remove/:clubId/:userId",authorizeRole("SYSTEM_AMDIN","CLUB_ADMIN"),clubMemberController.removeMemberFromClub);
+ClubMemberRouter.delete("/remove/:clubId/:userId",authorizeRole("SYSTEM_ADMIN","CLUB_ADMIN"),clubMemberController.removeMemberFromClub);
 ClubMemberRouter.get("/members/:clubId",clubMemberController.getClubMembers);
 ClubMemberRouter.get("/userClubs/:userId", clubMemberController.getUserClubs);
 ClubMemberRouter.get("/club/:clubId/membership",clubMemberController.getUserSpecificClub);

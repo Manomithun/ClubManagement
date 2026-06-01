@@ -8,6 +8,8 @@ const createEvent=async(eventData)=>{
 }
 
 const getAllEvents=async ({page,limit,search,status})=>{
+    const p = parseInt(page)  || 1;
+    const l = parseInt(limit) || 10;
     const events=await prisma.event.findMany({
         where:{
           ...(search && {
@@ -20,12 +22,10 @@ const getAllEvents=async ({page,limit,search,status})=>{
             status:status
           })
         },
-        skip:(page-1)*limit,
-        take:limit
+        skip:(p-1)*l,
+        take:l
     });
     return events;
-
-
 }
 
 const getEventById=async(id)=>{

@@ -1,5 +1,6 @@
 import departmentRepo from "../repositories/departmentRepo.js";
 import customError from "../utils/customError.js";
+import prisma from "../config/prisma.js";
 const createDepartment=async(data)=>{
    const {name}=data;
    const existdept=await departmentRepo.getDepartmentByName(name);
@@ -20,7 +21,7 @@ const updateDepartment=async(data)=>{
 }
 
 const getDepartmentById=async(id)=>{
-   const existdept=await departmentRepo.getDepartmentbyId(id);
+   const existdept=await departmentRepo.getDepartmentById(id);
    if(!existdept){
      throw new customError("Invalid Department Id",401);
    }
@@ -37,7 +38,7 @@ async(id)=>{
 
    if(users.length > 0){
 
-      throw new CustomError(
+      throw new customError(
          "Department contains users",
          400
       );
@@ -50,7 +51,7 @@ async(id)=>{
 
    if(clubs.length > 0){
 
-      throw new CustomError(
+      throw new customError(
          "Department contains clubs",
          400
       );
@@ -59,9 +60,14 @@ async(id)=>{
    return await departmentRepo
    .deleteDepartment(id);
 }
+const getAllDepartments = async () => {
+    return await prisma.department.findMany({ orderBy: { id: 'asc' } });
+};
+
 export default{
    deleteDepartment,
    getDepartmentById,
    updateDepartment,
-   createDepartment
+   createDepartment,
+   getAllDepartments
 }

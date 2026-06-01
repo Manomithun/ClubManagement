@@ -1,12 +1,12 @@
 import prisma from "../config/prisma.js";
 const createDepartment=async(data)=>{
-    const dept=await prisma.Department.create({
+    const dept=await prisma.department.create({
         data:data
     })
     return dept;
 }
 const getDepartmentByName=async(name)=>{
-    const deptName=await prisma.Department.find({
+    const deptName=await prisma.department.findFirst({
         where:{
             name:{
                 equals:name,
@@ -32,6 +32,7 @@ const updateDepartmentById=async(id,data)=>{
         },
         data
     });
+    return dept;
 }
 
 const deleteDepartment=async(id)=>{

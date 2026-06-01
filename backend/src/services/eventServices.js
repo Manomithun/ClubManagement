@@ -3,14 +3,19 @@ import allowedTransitions from "../utils/eventStatusTransitions.js";
 import  eventRepo from "../repositories/eventRepo.js";
 import clubRepo from "../repositories/clubRepo.js";
 const createEvent=async(data)=>{
-    const {clubId,approvedBy,description,venue,date_ofEvent,participant_Limit,status}=data;
-    const club=await club.getClubById(clubId);
+    const {clubId, description, date, maxParticipants, status}=data;
+    const club=await clubRepo.getClubById(clubId);
     if(!club){
         throw new customError("Invalid Club Id",404);
     }
-    
-
-    const event=await eventRepo.createEvent(data);
+    const event=await eventRepo.createEvent({
+        title:       data.title,
+        date:        new Date(date),
+        maxParticipants: Number(maxParticipants),
+        clubId:      Number(clubId),
+        description: description ?? null,
+        status:      status ?? 'PENDING',
+    });
     return event;
 }
 const getAllEvents=async(filters)=>{
@@ -66,7 +71,7 @@ const getEventByClubId=async(id)=>{
     if(!club){
         throw new customError("club id not found",404);
     } 
-    const events=await eventRepo.geteventByClubId(id);
+    const events=await eventRepo.getEventByClubId(id);
     return events;
 }
 

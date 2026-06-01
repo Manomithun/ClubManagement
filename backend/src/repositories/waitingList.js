@@ -1,12 +1,12 @@
 import prisma from "../config/prisma.js";
 const createWaitingListEntry=async(data)=>{
-    const entry=await prisma.WaitingList.create({
+    const entry=await prisma.waitingList.create({
         data:data
     });
     return entry;
 }
 const getWaitingListForCub=async(clubId)=>{
-    const waitingList=await prisma.WaitingList.findMany({
+    const waitingList=await prisma.waitingList.findMany({
         where:{
             clubId:clubId
         },
@@ -20,9 +20,9 @@ const getWaitingListForCub=async(clubId)=>{
     return waitingList;
 }
 const removeFromWaitingList=async(userId,clubId,tx=prisma)=>{
-    const removedEntry=await tx.WaitingList.delete({
+    const removedEntry=await tx.waitingList.delete({
         where:{
-            clubId_userId:{
+            userId_clubId:{
                 clubId:clubId,
                 userId:userId
             }
@@ -31,9 +31,9 @@ const removeFromWaitingList=async(userId,clubId,tx=prisma)=>{
     return removedEntry;
 }
 const getUserWaitingListEntry=async(userId,clubId)=>{
-    const entry=await prisma.WaitingList.findUnique({
+    const entry=await prisma.waitingList.findUnique({
         where:{
-            clubId_userId:{
+            userId_clubId:{
                 clubId:clubId,
                 userId:userId
             }
